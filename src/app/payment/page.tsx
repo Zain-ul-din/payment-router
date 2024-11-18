@@ -1,4 +1,6 @@
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { Coins, CreditCard, Landmark } from "lucide-react";
 import Image from "next/image";
 import Balancer from "react-wrap-balancer";
 
@@ -10,14 +12,14 @@ export default function PaymentPage() {
       <article
         className={cn(
           "max-w-[1100px] w-full h-full mx-auto my-auto rounded-xl",
-          "grid md:grid-cols-2 overflow-hidden",
+          "grid md:grid-cols-2 overflow-hidden md:gap-4",
           "bg-white border-2 border-black"
         )}
         style={{
           boxShadow: "5px 5px 0px black"
         }}
       >
-        <aside className="flex flex-col p-6 md:p-12 gap-8 mx-auto my-auto">
+        <aside className="flex flex-col p-6 sm:p-12 gap-6 md:gap-8">
           <div className="flex gap-4 items-center">
             <Image
               src={
@@ -31,7 +33,7 @@ export default function PaymentPage() {
             <h3 className="text-lg font-medium">OpenSource Github</h3>
           </div>
 
-          <h1 className="text-4xl font-medium mt-8">
+          <h1 className="text-4xl font-medium mt-6 md:mt-8">
             <Balancer>Whatsapp AI bot</Balancer>
           </h1>
 
@@ -40,19 +42,50 @@ export default function PaymentPage() {
             alt="product image"
             width={400}
             height={400}
-            className="rounded-xl  max-h-[300px] md:max-w-[350px] max-w-[100%] object-cover"
+            className="rounded-xl max-h-[300px] md:max-w-[450px] max-w-[100%] object-cover"
           />
 
           <p className="text-lg max-w-xl">
             <Balancer>
               Deployment for whats app AI Bot. Lorem ipsum dolor, sit amet
-              consectetur adipisicing elit. Reprehenderit eum blanditiis
-              temporibus, earum cumque possimus.
+              consectetur adipisicing elit.
             </Balancer>
           </p>
         </aside>
-        <section className="flex flex-col p-6 md:p-12 gap-12">
+        <section className="flex flex-col p-6 sm:p-12 md:gap-12 gap-8">
           <h2 className="text-2xl font-medium">Checkout</h2>
+
+          <div>
+            <Tabs defaultValue="card" className="w-full max-w-full">
+              <TabsList
+                className={cn(
+                  "bg-payment p-6 px-4 rounded-2xl border border-black text-black"
+                )}
+                style={{
+                  boxShadow: "2px 2px 0px black"
+                }}
+              >
+                <TabsTrigger value="card" className="p-2 rounded-2xl px-6">
+                  <CreditCard className="w-4 h-4 mr-2" />
+                  Card
+                </TabsTrigger>
+                <TabsTrigger value="bank" className="p-2 rounded-2xl px-6">
+                  <Landmark className="w-4 h-4 mr-2" />
+                  Bank
+                </TabsTrigger>
+                <TabsTrigger value="cash" className="p-2 rounded-2xl px-6">
+                  <Coins className="w-4 h-4 mr-2" />
+                  Cash App Pay
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="card" className="mt-8">
+                Make changes to your account here.
+              </TabsContent>
+              <TabsContent value="bank" className="mt-8">
+                Change your password here.
+              </TabsContent>
+            </Tabs>
+          </div>
         </section>
       </article>
     </main>
