@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Coins, CreditCard, Landmark } from "lucide-react";
@@ -12,14 +14,14 @@ export default function PaymentPage() {
       <article
         className={cn(
           "max-w-[1100px] w-full h-full mx-auto my-auto rounded-xl",
-          "grid md:grid-cols-2 overflow-hidden md:gap-4",
+          "grid md:px-[20%] lg:px-0 lg:grid-cols-2 overflow-hidden md:gap-4",
           "bg-white border-2 border-black"
         )}
         style={{
           boxShadow: "5px 5px 0px black"
         }}
       >
-        <aside className="flex flex-col p-6 sm:p-12 gap-6 md:gap-8">
+        <aside className="flex  flex-col  p-6 sm:p-12 gap-6 md:gap-8">
           <div className="flex gap-4 items-center">
             <Image
               src={
@@ -34,7 +36,7 @@ export default function PaymentPage() {
           </div>
 
           <h1 className="text-4xl font-medium mt-6 md:mt-8">
-            <Balancer>Whatsapp AI bot</Balancer>
+            <Balancer>Whatsapp AI Bot</Balancer>
           </h1>
 
           <Image
@@ -46,46 +48,87 @@ export default function PaymentPage() {
           />
 
           <p className="text-lg max-w-xl">
-            <Balancer>
-              Deployment for whats app AI Bot. Lorem ipsum dolor, sit amet
-              consectetur adipisicing elit.
-            </Balancer>
+            <Balancer>Deployment for whats app AI Bot.</Balancer>
           </p>
         </aside>
-        <section className="flex flex-col p-6 sm:p-12 md:gap-12 gap-8">
+        <section className="flex flex-col h-full p-6 sm:p-12 md:gap-12 gap-8">
           <h2 className="text-2xl font-medium">Checkout</h2>
 
           <div>
-            <Tabs defaultValue="card" className="w-full max-w-full">
+            <Tabs defaultValue="card" className="w-full max-w-[350px]">
               <TabsList
                 className={cn(
-                  "bg-payment p-6 px-4 rounded-2xl border border-black text-black"
+                  "bg-payment border border-black text-black w-full"
                 )}
                 style={{
                   boxShadow: "2px 2px 0px black"
                 }}
               >
-                <TabsTrigger value="card" className="p-2 rounded-2xl px-6">
+                <TabsTrigger value="card">
                   <CreditCard className="w-4 h-4 mr-2" />
                   Card
                 </TabsTrigger>
-                <TabsTrigger value="bank" className="p-2 rounded-2xl px-6">
+                <TabsTrigger value="bank">
                   <Landmark className="w-4 h-4 mr-2" />
                   Bank
                 </TabsTrigger>
-                <TabsTrigger value="cash" className="p-2 rounded-2xl px-6">
+                <TabsTrigger value="other">
                   <Coins className="w-4 h-4 mr-2" />
-                  Cash App Pay
+                  Other
                 </TabsTrigger>
               </TabsList>
-              <TabsContent value="card" className="mt-8">
-                Make changes to your account here.
+              <TabsContent value="card" className="mt-8 flex flex-col gap-4">
+                <p>Payment options using card</p>
+                <Button
+                  size={"lg"}
+                  className="rounded-full py-4 text-xl w-full text-center"
+                >
+                  Pay with <span className="text-indigo-500">Stripe</span>
+                </Button>
+                <Button
+                  size={"lg"}
+                  className="rounded-full text-black py-4 text-xl w-full text-center"
+                  style={{
+                    background: "rgb(255, 144, 232)"
+                  }}
+                >
+                  Pay on <span className="text-blue-950">Gumroad</span>
+                </Button>
               </TabsContent>
-              <TabsContent value="bank" className="mt-8">
-                Change your password here.
+              <TabsContent value="bank" className="mt-8 flex flex-col gap-4">
+                <p>Payment options using card</p>
+                <Input
+                  className="rounded-2xl py-6 border border-black"
+                  value={"IBAN: PK17MEZN0002090106236587"}
+                  readOnly
+                />
+              </TabsContent>
+              <TabsContent value="other" className="mt-8">
+                No other option available.
               </TabsContent>
             </Tabs>
+
+            <div className="border-t pt-8 max-w-[350px] flex flex-col gap-4">
+              <div className="grid grid-cols-2">
+                <h3>Subtotal</h3>
+                <p className="ml-auto">30$</p>
+              </div>
+              <div className="grid grid-cols-2">
+                <h3>VAT / Sales Tax</h3>
+                <p className="ml-auto">$0.00</p>
+              </div>
+              <div className="grid grid-cols-2">
+                <h3 className="font-bold">Total</h3>
+                <p className="ml-auto font-bold">$30$</p>
+              </div>
+            </div>
           </div>
+          <footer className="mt-auto text-xs text-muted-foreground">
+            <Balancer>
+              Powered by PayRouter. An open-source solution for payments
+              routing.
+            </Balancer>
+          </footer>
         </section>
       </article>
     </main>
