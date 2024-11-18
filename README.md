@@ -1,3 +1,7 @@
+_This project is under development. new contributors are welcome to join._
+
+![image](https://github.com/user-attachments/assets/642cc37b-f675-4b13-838b-d7520e48976d)
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
