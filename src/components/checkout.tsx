@@ -6,26 +6,44 @@ import { Coins, CreditCard, Landmark } from "lucide-react";
 import Image from "next/image";
 import Balancer from "react-wrap-balancer";
 
-interface CheckOutParams {
+type CheckOutParams = {
   productName: string;
   description: string;
   imgURL?: string | ArrayBuffer;
-}
+  styles?: {
+    "--background": string;
+    "--border": string;
+    "--card": string;
+  };
+};
+
+const defaultStyles: CheckOutParams["styles"] = {
+  "--background": "45.08 91.71% 62.16%",
+  "--border": "0 0% 5%",
+  "--card": "0 0% 100%"
+};
 
 export default function CheckOut({
   productName,
   description,
-  imgURL
+  imgURL,
+  styles
 }: CheckOutParams) {
   return (
     <main
-      className={cn("w-full min-h-[100svh] h-full flex  bg-payment md:p-8 p-4")}
+      style={{
+        ...defaultStyles,
+        ...styles
+      }}
+      className={cn(
+        "w-full min-h-[100svh] h-full flex bg-background md:p-8 p-4 "
+      )}
     >
       <article
         className={cn(
           "max-w-[1100px] w-full h-full mx-auto my-auto rounded-xl",
           "grid md:px-[20%] lg:px-0 lg:grid-cols-2 overflow-hidden md:gap-4",
-          "bg-white border-2 border-black"
+          "bg-card border-2"
         )}
         style={{
           boxShadow: "5px 5px 0px black"
@@ -71,7 +89,7 @@ export default function CheckOut({
             <Tabs defaultValue="card" className="w-full max-w-[350px]">
               <TabsList
                 className={cn(
-                  "bg-payment border border-black text-black w-full"
+                  "bg-background border border-black text-black w-full"
                 )}
                 style={{
                   boxShadow: "2px 2px 0px black"
