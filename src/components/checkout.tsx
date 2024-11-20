@@ -29,6 +29,8 @@ export default function CheckOut({
   imgURL,
   styles
 }: CheckOutParams) {
+  console.log(styles);
+
   return (
     <main
       style={{
@@ -46,7 +48,7 @@ export default function CheckOut({
           "bg-card border-2"
         )}
         style={{
-          boxShadow: "5px 5px 0px black"
+          boxShadow: "5px 5px 0px hsl(var(--border))"
         }}
       >
         <aside className="flex  flex-col  p-6 sm:p-12 gap-6 md:gap-8">
@@ -92,7 +94,7 @@ export default function CheckOut({
                   "bg-background border border-black text-black w-full"
                 )}
                 style={{
-                  boxShadow: "2px 2px 0px black"
+                  boxShadow: "2px 2px 0px hsl(var(--border))"
                 }}
               >
                 <TabsTrigger value="card">
@@ -139,7 +141,7 @@ export default function CheckOut({
               </TabsContent>
             </Tabs>
 
-            <div className="border-t pt-8 max-w-[350px] flex flex-col gap-4">
+            <div className="border-t border-border/40 pt-8 max-w-[350px] flex flex-col gap-4">
               <div className="grid grid-cols-2">
                 <h3>Subtotal</h3>
                 <p className="ml-auto">30$</p>

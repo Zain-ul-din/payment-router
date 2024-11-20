@@ -20,9 +20,9 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { hexToHSL } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { hslStringToHex } from "../../lib/utils";
 
 const formSchema = z.object({
   productName: z.string({
@@ -30,6 +30,11 @@ const formSchema = z.object({
   }),
   description: z.string({
     message: "description is required field"
+  }),
+  styles: z.object({
+    "--background": z.string(),
+    "--border": z.string(),
+    "--card": z.string()
   })
 });
 
@@ -41,22 +46,21 @@ export default function NewPaymentPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      productName: ""
+      productName: "",
+      styles: {
+        "--background": "45.08 91.71% 62.16%",
+        "--border": "0 0% 10%",
+        "--card": "0 0% 100%"
+      }
     }
   });
-
-  const [color, setColor] = useState<string>("45.08 91.71% 62.16%");
 
   return (
     <>
       <CheckOut
         productName={form.watch("productName")}
         description={form.watch("description")}
-        styles={{
-          "--background": color,
-          "--border": "0 0% 10%",
-          "--card": color || "0 0% 100%"
-        }}
+        styles={form.watch("styles")}
       />
       <Sheet>
         <SheetTrigger>Open</SheetTrigger>
@@ -106,17 +110,92 @@ export default function NewPaymentPage() {
                 }}
               />
 
+              <div className="grid grid-cols-2 gap-2">
+                <FormField
+                  name="styles.--background"
+                  control={form.control}
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel>Background Color</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="color"
+                            placeholder="bg-color"
+                            {...field}
+                            onChange={(e) => {
+                              form.setValue(
+                                "styles.--background",
+                                hexToHSL(e.target.value)
+                              );
+                              form.trigger("styles.--background");
+                            }}
+                            value={hslStringToHex(field.value)}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    );
+                  }}
+                />
+
+                <FormField
+                  name="styles.--border"
+                  control={form.control}
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel>Border Color</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="color"
+                            placeholder="bg-color"
+                            {...field}
+                            onChange={(e) => {
+                              form.setValue(
+                                "styles.--border",
+                                hexToHSL(e.target.value)
+                              );
+                              form.trigger("styles.--border");
+                            }}
+                            value={hslStringToHex(field.value)}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    );
+                  }}
+                />
+
+                <FormField
+                  name="styles.--card"
+                  control={form.control}
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel>Card Color</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="color"
+                            placeholder="bg-color"
+                            {...field}
+                            onChange={(e) => {
+                              form.setValue(
+                                "styles.--card",
+                                hexToHSL(e.target.value)
+                              );
+                              form.trigger("styles.--card");
+                            }}
+                            value={hslStringToHex(field.value)}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    );
+                  }}
+                />
+              </div>
+
               <Button type="submit">Submit</Button>
             </form>
           </Form>
-
-          <Input
-            type="color"
-            placeholder="bg-color"
-            onChange={(e) => {
-              setColor(hexToHSL(e.target.value));
-            }}
-          />
         </SheetContent>
       </Sheet>
     </>

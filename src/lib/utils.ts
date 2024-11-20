@@ -50,3 +50,61 @@ export function hexToHSL(H: string) {
 
   return "" + h + " " + s + "% " + l + "%";
 }
+
+export function hslStringToHex(hslString: string): string {
+  const [h, s, l] = hslString
+    .split(" ")
+    .map((value, index) =>
+      index === 0 ? parseFloat(value) : parseFloat(value.replace("%", ""))
+    );
+
+  const sDecimal = s / 100;
+  const lDecimal = l / 100;
+
+  const c = (1 - Math.abs(2 * lDecimal - 1)) * sDecimal;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = lDecimal - c / 2;
+
+  let r = 0,
+    g = 0,
+    b = 0;
+
+  if (0 <= h && h < 60) {
+    r = c;
+    g = x;
+    b = 0;
+  } else if (60 <= h && h < 120) {
+    r = x;
+    g = c;
+    b = 0;
+  } else if (120 <= h && h < 180) {
+    r = 0;
+    g = c;
+    b = x;
+  } else if (180 <= h && h < 240) {
+    r = 0;
+    g = x;
+    b = c;
+  } else if (240 <= h && h < 300) {
+    r = x;
+    g = 0;
+    b = c;
+  } else if (300 <= h && h < 360) {
+    r = c;
+    g = 0;
+    b = x;
+  }
+
+  r = Math.round((r + m) * 255);
+  g = Math.round((g + m) * 255);
+  b = Math.round((b + m) * 255);
+
+  return rgbToHex(r, g, b);
+}
+
+function rgbToHex(r: number, g: number, b: number): string {
+  return (
+    "#" +
+    ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()
+  );
+}
