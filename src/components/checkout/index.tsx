@@ -1,27 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { checkOutTheme } from "@/lib/constant/checkout";
 import { cn } from "@/lib/utils";
+import { CheckOutParams } from "@/types";
 import { Coins, CreditCard, Landmark } from "lucide-react";
 import Image from "next/image";
 import Balancer from "react-wrap-balancer";
-
-type CheckOutParams = {
-  productName: string;
-  description: string;
-  imgURL?: string | ArrayBuffer;
-  styles?: {
-    "--background": string;
-    "--border": string;
-    "--card": string;
-  };
-};
-
-const defaultStyles: CheckOutParams["styles"] = {
-  "--background": "45.08 91.71% 62.16%",
-  "--border": "0 0% 5%",
-  "--card": "0 0% 100%"
-};
 
 export default function CheckOut({
   productName,
@@ -29,21 +14,19 @@ export default function CheckOut({
   imgURL,
   styles
 }: CheckOutParams) {
-  console.log(styles);
-
   return (
     <main
       style={{
-        ...defaultStyles,
+        ...checkOutTheme,
         ...styles
       }}
       className={cn(
-        "w-full min-h-[100svh] h-full flex bg-background md:p-8 p-4 "
+        "w-full min-h-[100svh] h-full flex bg-background md:p-8 p-4"
       )}
     >
       <article
         className={cn(
-          "max-w-[1100px] w-full h-full mx-auto my-auto rounded-xl",
+          "max-w-[1100px] w-full h-full mx-auto my-auto rounded-xl text-foreground",
           "grid md:px-[20%] lg:px-0 lg:grid-cols-2 overflow-hidden md:gap-4",
           "bg-card border-2"
         )}
@@ -90,22 +73,29 @@ export default function CheckOut({
           <div>
             <Tabs defaultValue="card" className="w-full max-w-[350px]">
               <TabsList
-                className={cn(
-                  "bg-background border border-black text-black w-full"
-                )}
+                className={cn("border bg-background text-foreground w-full")}
                 style={{
                   boxShadow: "2px 2px 0px hsl(var(--border))"
                 }}
               >
-                <TabsTrigger value="card">
+                <TabsTrigger
+                  value="card"
+                  className="data-[state=active]:bg-card"
+                >
                   <CreditCard className="w-4 h-4 mr-2" />
                   Card
                 </TabsTrigger>
-                <TabsTrigger value="bank">
+                <TabsTrigger
+                  value="bank"
+                  className="data-[state=active]:bg-card"
+                >
                   <Landmark className="w-4 h-4 mr-2" />
                   Bank
                 </TabsTrigger>
-                <TabsTrigger value="other">
+                <TabsTrigger
+                  value="other"
+                  className="data-[state=active]:bg-card"
+                >
                   <Coins className="w-4 h-4 mr-2" />
                   Other
                 </TabsTrigger>
@@ -156,7 +146,7 @@ export default function CheckOut({
               </div>
             </div>
           </div>
-          <footer className="mt-auto text-xs text-muted-foreground">
+          <footer className="mt-auto text-xs text-foreground/60">
             <Balancer>
               Powered by PayRouter. An open-source solution for payments
               routing.
