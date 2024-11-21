@@ -32,7 +32,8 @@ const formSchema = z.object({
   description: z.string().min(1, {
     message: "description is required field"
   }),
-  styles: checkOutThemeZodSchema
+  styles: checkOutThemeZodSchema,
+  buttons: z.record(z.string(), z.object({ text: z.string() }))
 });
 
 type FormType = z.infer<typeof formSchema>;
@@ -41,7 +42,8 @@ export default function NewCheckOut() {
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      styles: checkOutTheme
+      styles: checkOutTheme,
+      buttons: {}
     }
   });
 
@@ -136,6 +138,27 @@ export default function NewCheckOut() {
                   );
                 })}
               </div>
+
+              {/* render buttons */}
+              {Object.keys(form.watch("buttons")).map((key, i) => {
+                return (
+                  <Button type="button" key={i}>
+                    {key}
+                  </Button>
+                );
+              })}
+
+              <Button
+                type="button"
+                onClick={() =>
+                  form.setValue("buttons", {
+                    ...form.watch("buttons"),
+                    button: { text: "hello" }
+                  })
+                }
+              >
+                Add Button
+              </Button>
 
               <Button type="submit">Submit</Button>
             </form>
