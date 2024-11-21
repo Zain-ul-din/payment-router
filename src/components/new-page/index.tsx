@@ -30,6 +30,12 @@ import {
   paymentButtonThemeZodSchema
 } from "@/lib/constant/checkout";
 import { v4 as uuidv4 } from "uuid";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from "../ui/accordion";
 
 const formSchema = z.object({
   productName: z.string().min(1, {
@@ -59,6 +65,8 @@ export default function NewCheckOut() {
   const form = useForm<FormType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      productName: "",
+      description: "",
       styles: checkOutTheme,
       buttons: {}
     }
@@ -157,85 +165,106 @@ export default function NewCheckOut() {
                 })}
               </div>
 
-              {/* render buttons */}
-              {Object.entries(form.watch("buttons")).map(([key, val], i) => {
-                return (
-                  <div
-                    key={i}
-                    className="flex flex-col gap-4 bg-accent border p-2 rounded-md"
-                  >
-                    <FormField
-                      name={`buttons.${key}.text`}
-                      control={form.control}
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Payment Button</FormLabel>
-                            <FormControl>
-                              <Input placeholder="button text" {...field} />
-                            </FormControl>
-                          </FormItem>
-                        );
-                      }}
-                    />
+              <div className="my-8 h-1 bg-border"></div>
 
-                    <FormField
-                      name={`buttons.${key}.url`}
-                      control={form.control}
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Payment Button</FormLabel>
-                            <FormControl>
-                              <Input placeholder="url" {...field} />
-                            </FormControl>
-                          </FormItem>
-                        );
-                      }}
-                    />
+              <Accordion type="single" defaultValue="buttons" collapsible>
+                <AccordionItem value={"buttons"}>
+                  <AccordionTrigger className="hover:no-underline">
+                    <h3 className="text-xl ">Payment Buttons</h3>
+                  </AccordionTrigger>
+                  {/* render buttons */}
 
-                    <div className="grid grid-cols-2 gap-2">
-                      {(
-                        Object.keys(val.styles) as (keyof typeof val.styles)[]
-                      ).map((sKey, i) => {
+                  <AccordionContent>
+                    {Object.entries(form.watch("buttons")).map(
+                      ([key, val], i) => {
                         return (
-                          <FormField
+                          <div
                             key={i}
-                            name={`buttons.${key}.styles.${sKey}`}
-                            control={form.control}
-                            render={({ field }) => {
-                              return (
-                                <FormItem>
-                                  <FormLabel className="text-xs">
-                                    {sKey.replace("--", "")}
-                                  </FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      placeholder={sKey}
-                                      type="color"
-                                      {...field}
-                                      onChange={(e) => {
-                                        form.setValue(
-                                          `buttons.${key}.styles.${sKey}`,
-                                          hexToHSL(e.target.value)
-                                        );
-                                        form.trigger(
-                                          `buttons.${key}.styles.${sKey}`
-                                        );
-                                      }}
-                                      value={hslStringToHex(field.value)}
-                                    />
-                                  </FormControl>
-                                </FormItem>
-                              );
-                            }}
-                          />
+                            className="flex flex-col gap-4 bg-accent border p-2 rounded-md"
+                          >
+                            <FormField
+                              name={`buttons.${key}.text`}
+                              control={form.control}
+                              render={({ field }) => {
+                                return (
+                                  <FormItem>
+                                    <FormLabel>Text</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        placeholder="button text"
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                  </FormItem>
+                                );
+                              }}
+                            />
+
+                            <FormField
+                              name={`buttons.${key}.url`}
+                              control={form.control}
+                              render={({ field }) => {
+                                return (
+                                  <FormItem>
+                                    <FormLabel>URL</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="url" {...field} />
+                                    </FormControl>
+                                  </FormItem>
+                                );
+                              }}
+                            />
+
+                            <div className="grid grid-cols-2 gap-2">
+                              {(
+                                Object.keys(
+                                  val.styles
+                                ) as (keyof typeof val.styles)[]
+                              ).map((sKey, i) => {
+                                return (
+                                  <FormField
+                                    key={i}
+                                    name={`buttons.${key}.styles.${sKey}`}
+                                    control={form.control}
+                                    render={({ field }) => {
+                                      return (
+                                        <FormItem>
+                                          <FormLabel className="text-xs">
+                                            {sKey.replace("--", "")}
+                                          </FormLabel>
+                                          <FormControl>
+                                            <Input
+                                              placeholder={sKey}
+                                              type="color"
+                                              {...field}
+                                              onChange={(e) => {
+                                                form.setValue(
+                                                  `buttons.${key}.styles.${sKey}`,
+                                                  hexToHSL(e.target.value)
+                                                );
+                                                form.trigger(
+                                                  `buttons.${key}.styles.${sKey}`
+                                                );
+                                              }}
+                                              value={hslStringToHex(
+                                                field.value
+                                              )}
+                                            />
+                                          </FormControl>
+                                        </FormItem>
+                                      );
+                                    }}
+                                  />
+                                );
+                              })}
+                            </div>
+                          </div>
                         );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
+                      }
+                    )}
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
 
               <Button
                 type="button"
