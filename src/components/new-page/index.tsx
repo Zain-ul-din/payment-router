@@ -18,12 +18,18 @@ import {
   SheetTrigger
 } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
-import { hexToHSL } from "@/lib/utils";
+import { hexToHSL, isValidURL } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { hslStringToHex } from "../../lib/utils";
-import { checkOutTheme, checkOutThemeZodSchema } from "@/lib/constant/checkout";
+import {
+  checkOutTheme,
+  checkOutThemeZodSchema,
+  paymentButtonTheme,
+  paymentButtonThemeZodSchema
+} from "@/lib/constant/checkout";
+import { v4 as uuidv4 } from "uuid";
 
 const formSchema = z.object({
   productName: z.string().min(1, {
@@ -33,7 +39,18 @@ const formSchema = z.object({
     message: "description is required field"
   }),
   styles: checkOutThemeZodSchema,
-  buttons: z.record(z.string(), z.object({ text: z.string() }))
+  buttons: z.record(
+    z.string({}),
+    z.object({
+      text: z.string().min(1, {
+        message: "button text is required field."
+      }),
+      url: z.string().refine((url) => isValidURL(url), {
+        message: "Invalid URL."
+      }),
+      styles: paymentButtonThemeZodSchema
+    })
+  )
 });
 
 type FormType = z.infer<typeof formSchema>;
@@ -53,10 +70,11 @@ export default function NewCheckOut() {
         productName={form.watch("productName")}
         description={form.watch("description")}
         styles={form.watch("styles")}
+        buttons={Object.values(form.watch("buttons"))}
       />
       <Sheet>
         <SheetTrigger>Open</SheetTrigger>
-        <SheetContent>
+        <SheetContent className="overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Are you absolutely sure?</SheetTitle>
             <SheetDescription>
@@ -140,22 +158,98 @@ export default function NewCheckOut() {
               </div>
 
               {/* render buttons */}
-              {Object.keys(form.watch("buttons")).map((key, i) => {
+              {Object.entries(form.watch("buttons")).map(([key, val], i) => {
                 return (
-                  <Button type="button" key={i}>
-                    {key}
-                  </Button>
+                  <div
+                    key={i}
+                    className="flex flex-col gap-4 bg-accent border p-2 rounded-md"
+                  >
+                    <FormField
+                      name={`buttons.${key}.text`}
+                      control={form.control}
+                      render={({ field }) => {
+                        return (
+                          <FormItem>
+                            <FormLabel>Payment Button</FormLabel>
+                            <FormControl>
+                              <Input placeholder="button text" {...field} />
+                            </FormControl>
+                          </FormItem>
+                        );
+                      }}
+                    />
+
+                    <FormField
+                      name={`buttons.${key}.url`}
+                      control={form.control}
+                      render={({ field }) => {
+                        return (
+                          <FormItem>
+                            <FormLabel>Payment Button</FormLabel>
+                            <FormControl>
+                              <Input placeholder="url" {...field} />
+                            </FormControl>
+                          </FormItem>
+                        );
+                      }}
+                    />
+
+                    <div className="grid grid-cols-2 gap-2">
+                      {(
+                        Object.keys(val.styles) as (keyof typeof val.styles)[]
+                      ).map((sKey, i) => {
+                        return (
+                          <FormField
+                            key={i}
+                            name={`buttons.${key}.styles.${sKey}`}
+                            control={form.control}
+                            render={({ field }) => {
+                              return (
+                                <FormItem>
+                                  <FormLabel className="text-xs">
+                                    {sKey.replace("--", "")}
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      placeholder={sKey}
+                                      type="color"
+                                      {...field}
+                                      onChange={(e) => {
+                                        form.setValue(
+                                          `buttons.${key}.styles.${sKey}`,
+                                          hexToHSL(e.target.value)
+                                        );
+                                        form.trigger(
+                                          `buttons.${key}.styles.${sKey}`
+                                        );
+                                      }}
+                                      value={hslStringToHex(field.value)}
+                                    />
+                                  </FormControl>
+                                </FormItem>
+                              );
+                            }}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
                 );
               })}
 
               <Button
                 type="button"
-                onClick={() =>
+                onClick={() => {
+                  const key = uuidv4();
                   form.setValue("buttons", {
                     ...form.watch("buttons"),
-                    button: { text: "hello" }
-                  })
-                }
+                    [key]: {
+                      text: "hello",
+                      url: "https://",
+                      styles: paymentButtonTheme
+                    }
+                  });
+                }}
               >
                 Add Button
               </Button>

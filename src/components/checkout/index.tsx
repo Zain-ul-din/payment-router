@@ -6,13 +6,15 @@ import { cn } from "@/lib/utils";
 import { CheckOutParams } from "@/types";
 import { Coins, CreditCard, Landmark } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import Balancer from "react-wrap-balancer";
 
 export default function CheckOut({
   productName,
   description,
   imgURL,
-  styles
+  styles,
+  buttons
 }: CheckOutParams) {
   return (
     <main
@@ -102,7 +104,28 @@ export default function CheckOut({
               </TabsList>
               <TabsContent value="card" className="mt-8 flex flex-col gap-4">
                 <p>Payment options using card</p>
-                <Button
+                {buttons.map((btn, idx) => {
+                  return (
+                    <Link
+                      referrerPolicy="no-referrer"
+                      key={idx}
+                      href={btn.url}
+                      target="_blank"
+                    >
+                      <Button
+                        size={"lg"}
+                        key={idx}
+                        className="rounded-full py-4 text-xl w-full text-center"
+                        style={{
+                          ...btn.styles
+                        }}
+                      >
+                        {btn.text}
+                      </Button>
+                    </Link>
+                  );
+                })}
+                {/* <Button
                   size={"lg"}
                   className="rounded-full py-4 text-xl w-full text-center"
                 >
@@ -116,7 +139,7 @@ export default function CheckOut({
                   }}
                 >
                   Pay on <span className="text-blue-950">Gumroad</span>
-                </Button>
+                </Button> */}
               </TabsContent>
               <TabsContent value="bank" className="mt-8 flex flex-col gap-4">
                 <p>Payment options using card</p>

@@ -108,3 +108,13 @@ function rgbToHex(r: number, g: number, b: number): string {
     ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()
   );
 }
+
+export function isValidURL(url: string) {
+  try {
+    new URL(url);
+    return true;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (_) {
+    return false;
+  }
+}
