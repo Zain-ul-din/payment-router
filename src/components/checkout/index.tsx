@@ -14,7 +14,8 @@ export default function CheckOut({
   description,
   imgURL,
   styles,
-  buttons
+  buttons,
+  invoice
 }: CheckOutParams) {
   return (
     <main
@@ -102,29 +103,31 @@ export default function CheckOut({
                   Other
                 </TabsTrigger>
               </TabsList>
-              <TabsContent value="card" className="mt-8 flex flex-col gap-4">
-                <p>Payment options using card</p>
-                {buttons.map((btn, idx) => {
-                  return (
-                    <Link
-                      referrerPolicy="no-referrer"
-                      key={idx}
-                      href={btn.url}
-                      target="_blank"
-                    >
-                      <Button
-                        size={"lg"}
+              <TabsContent value="card">
+                <div className="mt-8 flex flex-col gap-2">
+                  <p>Payment options using card</p>
+                  {buttons.map((btn, idx) => {
+                    return (
+                      <Link
+                        referrerPolicy="no-referrer"
                         key={idx}
-                        className="rounded-full py-4 text-xl w-full text-center"
-                        style={{
-                          ...btn.styles
-                        }}
+                        href={btn.url}
+                        target="_blank"
                       >
-                        {btn.text}
-                      </Button>
-                    </Link>
-                  );
-                })}
+                        <Button
+                          size={"lg"}
+                          key={idx}
+                          className="rounded-full py-4 text-xl w-full text-center"
+                          style={{
+                            ...btn.styles
+                          }}
+                        >
+                          {btn.text}
+                        </Button>
+                      </Link>
+                    );
+                  })}
+                </div>
                 {/* <Button
                   size={"lg"}
                   className="rounded-full py-4 text-xl w-full text-center"
@@ -132,40 +135,55 @@ export default function CheckOut({
                   Pay with <span className="text-indigo-500">Stripe</span>
                 </Button>
                 <Button
-                  size={"lg"}
-                  className="rounded-full text-black py-4 text-xl w-full text-center"
-                  style={{
-                    background: "rgb(255, 144, 232)"
+                size={"lg"}
+                className="rounded-full text-black py-4 text-xl w-full text-center"
+                style={{
+                  background: "rgb(255, 144, 232)"
                   }}
                 >
                   Pay on <span className="text-blue-950">Gumroad</span>
                 </Button> */}
               </TabsContent>
-              <TabsContent value="bank" className="mt-8 flex flex-col gap-4">
-                <p>Payment options using card</p>
-                <Input
-                  className="rounded-2xl py-6 border border-black"
-                  value={"IBAN: PK17MEZN0002090106236587"}
-                  readOnly
-                />
+              <TabsContent value="bank">
+                <div className="mt-8 flex flex-col gap-4">
+                  <p>Payment options using card</p>
+                  <Input
+                    className="rounded-2xl py-6 border border-black"
+                    value={"IBAN: PK17MEZN0002090106236587"}
+                    readOnly
+                  />
+                </div>
               </TabsContent>
-              <TabsContent value="other" className="mt-8">
-                No other option available.
+              <TabsContent value="other">
+                <div className="mt-8 flex flex-col gap-4">
+                  No other option available.
+                </div>
               </TabsContent>
             </Tabs>
 
-            <div className="border-t border-border/40 pt-8 max-w-[350px] flex flex-col gap-4">
-              <div className="grid grid-cols-2">
-                <h3>Subtotal</h3>
-                <p className="ml-auto">30$</p>
-              </div>
-              <div className="grid grid-cols-2">
-                <h3>VAT / Sales Tax</h3>
-                <p className="ml-auto">$0.00</p>
-              </div>
+            <div className="border-t mt-8 border-border/40 pt-8 max-w-[350px] flex flex-col gap-4">
+              {invoice.map(({ item, price, quantity }, i) => {
+                return (
+                  <div className="grid grid-cols-10 items-center" key={i}>
+                    <h3 className="col-span-6">{item}</h3>
+                    <span className="col-span-2 ml-auto text-foreground/80">
+                      {quantity > 1 && <>{quantity}x</>}
+                    </span>
+                    <p className="ml-auto col-span-2">{price}$</p>
+                  </div>
+                );
+              })}
               <div className="grid grid-cols-2">
                 <h3 className="font-bold">Total</h3>
-                <p className="ml-auto font-bold">$30$</p>
+                <p className="ml-auto font-bold">
+                  {invoice.reduce(
+                    (acc, curr) =>
+                      acc +
+                      parseInt(curr.price + "") * parseInt(curr.quantity + ""),
+                    0
+                  )}
+                  $
+                </p>
               </div>
             </div>
           </div>

@@ -56,6 +56,20 @@ const formSchema = z.object({
       }),
       styles: paymentButtonThemeZodSchema
     })
+  ),
+  invoice: z.record(
+    z.string({}),
+    z.object({
+      item: z.string().min(1, {
+        message: "Item name is required field."
+      }),
+      price: z.coerce.number().min(0, {
+        message: "Item price must be a positive number."
+      }),
+      quantity: z.coerce.number().min(1, {
+        message: "Item quantity must be a positive number"
+      })
+    })
   )
 });
 
@@ -68,9 +82,12 @@ export default function NewCheckOut() {
       productName: "",
       description: "",
       styles: checkOutTheme,
-      buttons: {}
+      buttons: {},
+      invoice: {}
     }
   });
+
+  console.log(form.formState.errors);
 
   return (
     <>
@@ -79,6 +96,7 @@ export default function NewCheckOut() {
         description={form.watch("description")}
         styles={form.watch("styles")}
         buttons={Object.values(form.watch("buttons"))}
+        invoice={Object.values(form.watch("invoice"))}
       />
       <Sheet>
         <SheetTrigger>Open</SheetTrigger>
@@ -180,7 +198,7 @@ export default function NewCheckOut() {
                         return (
                           <div
                             key={i}
-                            className="flex flex-col gap-4 bg-accent border p-2 rounded-md"
+                            className="flex flex-col gap-4 border p-2 rounded-md mb-2"
                           >
                             <FormField
                               name={`buttons.${key}.text`}
@@ -264,24 +282,113 @@ export default function NewCheckOut() {
                     )}
                   </AccordionContent>
                 </AccordionItem>
+                <div className="flex w-full my-4">
+                  <Button
+                    className="ml-auto"
+                    type="button"
+                    size={"sm"}
+                    onClick={() => {
+                      const key = uuidv4();
+                      form.setValue("buttons", {
+                        ...form.watch("buttons"),
+                        [key]: {
+                          text: "hello",
+                          url: "https://",
+                          styles: paymentButtonTheme
+                        }
+                      });
+                    }}
+                  >
+                    Add Button
+                  </Button>
+                </div>
               </Accordion>
 
-              <Button
-                type="button"
-                onClick={() => {
-                  const key = uuidv4();
-                  form.setValue("buttons", {
-                    ...form.watch("buttons"),
-                    [key]: {
-                      text: "hello",
-                      url: "https://",
-                      styles: paymentButtonTheme
-                    }
-                  });
-                }}
-              >
-                Add Button
-              </Button>
+              <Accordion type="single" defaultValue="invoice" collapsible>
+                <AccordionItem value="invoice">
+                  <AccordionTrigger className="hover:no-underline">
+                    <h3 className="text-xl ">Invoice</h3>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    {Object.entries(form.watch("invoice")).map(([key], i) => {
+                      return (
+                        <div
+                          key={i}
+                          className="grid grid-cols-11 mb-2 gap-2  border p-2 rounded-md"
+                        >
+                          <FormField
+                            control={form.control}
+                            name={`invoice.${key}.item`}
+                            render={({ field }) => (
+                              <FormItem className="col-span-5">
+                                <FormLabel>Item Name</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="item name" {...field} />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name={`invoice.${key}.price`}
+                            render={({ field }) => (
+                              <FormItem className="col-span-3">
+                                <FormLabel>Price</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    placeholder="price"
+                                    {...field}
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name={`invoice.${key}.quantity`}
+                            render={({ field }) => (
+                              <FormItem className="col-span-3">
+                                <FormLabel>QT</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    placeholder="quantity"
+                                    {...field}
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      );
+                    })}
+                  </AccordionContent>
+                </AccordionItem>
+
+                <div className="flex w-full my-4">
+                  <Button
+                    className="ml-auto"
+                    type="button"
+                    size={"sm"}
+                    onClick={() => {
+                      const key = uuidv4();
+                      form.setValue("invoice", {
+                        ...form.watch("invoice"),
+                        [key]: {
+                          item: "New Item",
+                          price: 0,
+                          quantity: 1
+                        }
+                      });
+                    }}
+                  >
+                    Add Item
+                  </Button>
+                </div>
+              </Accordion>
 
               <Button type="submit">Submit</Button>
             </form>
