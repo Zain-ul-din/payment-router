@@ -338,6 +338,22 @@ export default function NewCheckOut() {
                                 );
                               })}
                             </div>
+
+                            <div className="flex w-full">
+                              <Button
+                                size={"icon"}
+                                variant={"destructive"}
+                                className="ml-auto"
+                                onClick={() => {
+                                  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                                  const { [key]: _, ...rest } =
+                                    form.watch("buttons");
+                                  form.setValue("buttons", rest);
+                                }}
+                              >
+                                <TrashIcon />
+                              </Button>
+                            </div>
                           </div>
                         );
                       }
