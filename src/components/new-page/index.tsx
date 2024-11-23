@@ -36,20 +36,42 @@ import {
   AccordionItem,
   AccordionTrigger
 } from "../ui/accordion";
+import ColorInput from "../shared/color-input";
+import { TrashIcon } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "../ui/select";
 
 const formSchema = z.object({
-  productName: z.string().min(1, {
-    message: "Product name is required field."
-  }),
-  description: z.string().min(1, {
-    message: "description is required field"
-  }),
+  productName: z
+    .string()
+    .min(1, {
+      message: "Product name is required field."
+    })
+    .max(100, {
+      message: "Title is too long."
+    }),
+  description: z
+    .string()
+    .min(1, {
+      message: "description is required field"
+    })
+    .max(2000, {
+      message: "Description is too long."
+    }),
   styles: checkOutThemeZodSchema,
   buttons: z.record(
     z.string({}),
     z.object({
       text: z.string().min(1, {
         message: "button text is required field."
+      }),
+      type: z.enum(["button", "text"], {
+        message: "Invalid button type"
       }),
       url: z.string().refine((url) => isValidURL(url), {
         message: "Invalid URL."
@@ -87,8 +109,6 @@ export default function NewCheckOut() {
     }
   });
 
-  console.log(form.formState.errors);
-
   return (
     <>
       <CheckOut
@@ -102,16 +122,18 @@ export default function NewCheckOut() {
         <SheetTrigger>Open</SheetTrigger>
         <SheetContent className="overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>Are you absolutely sure?</SheetTitle>
+            <SheetTitle>Edit Page</SheetTitle>
             <SheetDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove your data from our servers.
+              Make changes to your product details, customize payment buttons,
+              and generate invoices. Use the form below to add or edit the
+              fields. Changes will be reflected in the checkout process in
+              real-time.
             </SheetDescription>
           </SheetHeader>
 
           <Form {...form}>
             <form
-              className="space-y-4 mt-8"
+              className="space-y-4 mt-4"
               onSubmit={form.handleSubmit((data) => {
                 console.log(data);
               })}
@@ -139,7 +161,11 @@ export default function NewCheckOut() {
                     <FormItem>
                       <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="description" {...field} />
+                        <Textarea
+                          className="max-h-[250px]"
+                          placeholder="description"
+                          {...field}
+                        />
                       </FormControl>
                     </FormItem>
                   );
@@ -162,8 +188,7 @@ export default function NewCheckOut() {
                               "--",
                               ""
                             )} color`}</FormLabel>
-                            <Input
-                              type="color"
+                            <ColorInput
                               placeholder={key}
                               {...field}
                               onChange={(e) => {
@@ -174,6 +199,7 @@ export default function NewCheckOut() {
                                 form.trigger(`styles.${key}`);
                               }}
                               value={hslStringToHex(field.value)}
+                              className="mr-auto"
                             />
                           </FormItem>
                         );
@@ -183,12 +209,12 @@ export default function NewCheckOut() {
                 })}
               </div>
 
-              <div className="my-8 h-1 bg-border"></div>
+              <div className="my-8 h-[1px] bg-border"></div>
 
               <Accordion type="single" defaultValue="buttons" collapsible>
                 <AccordionItem value={"buttons"}>
                   <AccordionTrigger className="hover:no-underline">
-                    <h3 className="text-xl ">Payment Buttons</h3>
+                    <h3>Payment Buttons</h3>
                   </AccordionTrigger>
                   {/* render buttons */}
 
@@ -198,7 +224,7 @@ export default function NewCheckOut() {
                         return (
                           <div
                             key={i}
-                            className="flex flex-col gap-4 border p-2 rounded-md mb-2"
+                            className="flex flex-col gap-4 border p-2 py-4 rounded-md mb-2"
                           >
                             <FormField
                               name={`buttons.${key}.text`}
@@ -233,7 +259,43 @@ export default function NewCheckOut() {
                               }}
                             />
 
-                            <div className="grid grid-cols-2 gap-2">
+                            <FormField
+                              name={`buttons.${key}.type`}
+                              control={form.control}
+                              render={({ field }) => {
+                                return (
+                                  <FormItem>
+                                    <FormLabel>Type</FormLabel>
+                                    <FormControl>
+                                      <Select
+                                        {...field}
+                                        defaultValue="button"
+                                        onValueChange={(v) => {
+                                          form.setValue(
+                                            `buttons.${key}.type`,
+                                            v as any
+                                          );
+                                        }}
+                                      >
+                                        <SelectTrigger>
+                                          <SelectValue placeholder="Type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="button">
+                                            Button
+                                          </SelectItem>
+                                          <SelectItem value="text">
+                                            Text
+                                          </SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                    </FormControl>
+                                  </FormItem>
+                                );
+                              }}
+                            />
+
+                            <div className="grid grid-cols-2 gap-2 p-2">
                               {(
                                 Object.keys(
                                   val.styles
@@ -247,11 +309,11 @@ export default function NewCheckOut() {
                                     render={({ field }) => {
                                       return (
                                         <FormItem>
-                                          <FormLabel className="text-xs">
+                                          <FormLabel>
                                             {sKey.replace("--", "")}
                                           </FormLabel>
                                           <FormControl>
-                                            <Input
+                                            <ColorInput
                                               placeholder={sKey}
                                               type="color"
                                               {...field}
@@ -294,7 +356,8 @@ export default function NewCheckOut() {
                         [key]: {
                           text: "hello",
                           url: "https://",
-                          styles: paymentButtonTheme
+                          styles: paymentButtonTheme,
+                          type: "button"
                         }
                       });
                     }}
@@ -307,7 +370,7 @@ export default function NewCheckOut() {
               <Accordion type="single" defaultValue="invoice" collapsible>
                 <AccordionItem value="invoice">
                   <AccordionTrigger className="hover:no-underline">
-                    <h3 className="text-xl ">Invoice</h3>
+                    <h3>Invoice</h3>
                   </AccordionTrigger>
                   <AccordionContent>
                     {Object.entries(form.watch("invoice")).map(([key], i) => {
@@ -362,6 +425,21 @@ export default function NewCheckOut() {
                               </FormItem>
                             )}
                           />
+
+                          <Button
+                            className="col-start-10 ml-3"
+                            type="button"
+                            variant={"destructive"}
+                            size={"icon"}
+                            onClick={() => {
+                              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                              const { [key]: omittedKey, ...rest } =
+                                form.watch("invoice");
+                              form.setValue("invoice", rest);
+                            }}
+                          >
+                            <TrashIcon />
+                          </Button>
                         </div>
                       );
                     })}

@@ -5,7 +5,12 @@ export type CheckOutParams = {
   description: string;
   imgURL?: string | ArrayBuffer;
   styles?: typeof checkOutTheme;
-  buttons: { text: string; url: string; styles: typeof paymentButtonTheme }[];
+  buttons: {
+    text: string;
+    url: string;
+    type: "button" | "text";
+    styles: typeof paymentButtonTheme;
+  }[];
   invoice: {
     item: string;
     price: number;

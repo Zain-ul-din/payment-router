@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { checkOutTheme } from "@/lib/constant/checkout";
 import { cn } from "@/lib/utils";
 import { CheckOutParams } from "@/types";
-import { Coins, CreditCard, Landmark } from "lucide-react";
+import { Coins, Copy, CreditCard, Landmark } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import Balancer from "react-wrap-balancer";
@@ -147,11 +147,21 @@ export default function CheckOut({
               <TabsContent value="bank">
                 <div className="mt-8 flex flex-col gap-4">
                   <p>Payment options using card</p>
-                  <Input
-                    className="rounded-2xl py-6 border border-black"
-                    value={"IBAN: PK17MEZN0002090106236587"}
-                    readOnly
-                  />
+                  <div className="relative">
+                    <Input
+                      className="rounded-2xl py-6 border border-black"
+                      value={"IBAN: PK17MEZN0002090106236587"}
+                      readOnly
+                    />
+                    <div className="absolute inset-0 w-full h-full flex items-center">
+                      <Button
+                        className="ml-auto mr-2 rounded-xl outline-none border border-border hover:bg-card text-foreground"
+                        variant={"outline"}
+                      >
+                        <Copy />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </TabsContent>
               <TabsContent value="other">
